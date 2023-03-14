@@ -46,10 +46,11 @@ def contact(request):
 # Update the `get_dealerships` view to render the index page with a list of dealerships
 def get_dealerships(request):
     if request.method == "GET":
+        context = {}
         url = 'https://eu-de.functions.appdomain.cloud/api/v1/web/0581ed39-c804-41c0-8c7d-094e5cc8836f/dealership-package/get-dealership'
         dealerships = get_dealers_from_cf(url)
-        dealer_names = ''.join([dealer.short_name for dealer in dealerships])
-        return HttpResponse(dealer_names)
+        context['dealership_list'] = dealerships
+        return render(request, 'djangoapp/index.html', context)
 
 
 # Create a `get_dealer_details` view to render the reviews of a dealer

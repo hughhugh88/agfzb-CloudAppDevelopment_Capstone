@@ -9,10 +9,6 @@ from django.contrib import messages
 from datetime import datetime
 import logging
 import json
-from ibm_watson import NaturalLanguageUnderstandingV1
-from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
-from ibm_watson.natural_language_understanding_v1 import Features, EntitiesOptions, KeywordsOptions, SentimentOptions
-
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -75,6 +71,36 @@ def get_dealer_details(request, id):
 
 
 # Create a `add_review` view to submit a review
-# def add_review(request, dealer_id):
-# ...
+def add_review(request, id):
+    context = {}
+    dealer_url = 'https://eu-de.functions.appdomain.cloud/api/v1/web/0581ed39-c804-41c0-8c7d-094e5cc8836f/dealership-package/get-dealership'
+    dealer = get_dealers_from_cf(dealer_url, id = id)
+    context['dealer'] = dealer
+    if request.method == 'GET':
+        cars = CarModel.objects.all()
+        context['cars'] = cars
 
+        return render(request, 'djangoapp/add_review.html', context)
+    
+    elif request.method == 'POST':
+        # if request.user.is_authenticated:
+        username = 'b'
+        review = {}
+        car_id = request.POST['car']
+        car = CarModel.objects.get(pk=car_id)
+        review['time'] = datetime.utcnow().isoformat()
+        review['name'] = username
+        review['dealersip'] = id
+        review['review'] = request.POST['content']
+        review['purchase'] = False
+        if request.POST.get('purchasecheck'):
+            review['purchase'] = True
+        review['purchase_date'] = request.POST['purchasedate']
+        review['car_model'] = car.name
+        new_review = {}
+        new_review['review'] = review
+        review_post_url = 'https://eu-de.functions.appdomain.cloud/api/v1/web/0581ed39-c804-41c0-8c7d-094e5cc8836f/dealership-package/post-review'
+
+        post_request(review_post_url, new_review, id = id)
+        
+        return redirect('djangoapp:dealer_details', id=id)

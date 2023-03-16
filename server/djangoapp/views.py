@@ -9,6 +9,10 @@ from django.contrib import messages
 from datetime import datetime
 import logging
 import json
+from ibm_watson import NaturalLanguageUnderstandingV1
+from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
+from ibm_watson.natural_language_understanding_v1 import Features, EntitiesOptions, KeywordsOptions, SentimentOptions
+
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -67,6 +71,7 @@ def get_dealer_details(request, id):
         context['reviews'] = reviews
 
         return render(request, 'djangoapp/dealer_details.html', context)
+
 
 
 # Create a `add_review` view to submit a review

@@ -86,9 +86,9 @@ def get_dealer_reviews_from_cf(url, **kwargs):
                 if 'car_year' in dealer_review:
                     review_obj.car_year = dealer_review['car_year']
                 
-            # sentiment = analyze_review_sentiments(review_obj.review)
-            # print(sentiment)
-            # review_obj.sentiment = sentiment
+                sentiment = analyze_review_sentiments(review_obj.review)
+                print(sentiment)
+                review_obj.sentiment = sentiment
                 results.append(review_obj)
         
         return results
@@ -98,6 +98,17 @@ def get_dealer_reviews_from_cf(url, **kwargs):
 # def analyze_review_sentiments(text):
 # - Call get_request() with specified arguments
 # - Get the returned sentiment label such as Positive or Negative
+def analyze_review_sentiments(text):
+    url = 'https://api.eu-gb.natural-language-understanding.watson.cloud.ibm.com/instances/76c7f3b6-5a0f-4523-8e6e-dfc4204827ba'
+    api_key = 'Srl4vAlNZt2AuOrvyvzu5PpETzFx577dLlvcv8S_Ucu6'
+    authenticator = IAMAuthenticator(api_key)
+    nlu = NaturalLanguageUnderstandingV1(version = '2021-08-01',
+                                         authenticator = authenticator)
+    nlu.set_service_url(url)
+    response = nlu.analyze(text = text + 'hello hello hello', features = Features(sentiment=SentimentOptions(targets=[text+'hello hello hello']))).get_result()
+    label = json.dumps(response, indent = 2)
+    label = response['sentiment']['document']['label']
 
+    return label
 
 

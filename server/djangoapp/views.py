@@ -86,8 +86,8 @@ def add_review(request, id):
         # if request.user.is_authenticated:
         username = 'b'
         review = {}
-        car_id = request.POST['car']
-        car = CarModel.objects.get(pk=car_id)
+        # car_id = request.POST['car']
+        # car = CarModel.objects.get(pk=car_id)
         review['time'] = datetime.utcnow().isoformat()
         review['name'] = username
         review['dealersip'] = id
@@ -96,11 +96,9 @@ def add_review(request, id):
         if request.POST.get('purchasecheck'):
             review['purchase'] = True
         review['purchase_date'] = request.POST['purchasedate']
-        review['car_model'] = car.name
-        new_review = {}
-        new_review['review'] = review
+        # review['car_model'] = car.name
         review_post_url = 'https://eu-de.functions.appdomain.cloud/api/v1/web/0581ed39-c804-41c0-8c7d-094e5cc8836f/dealership-package/post-review'
 
-        post_request(review_post_url, new_review, id = id)
+        post_request(review_post_url, review, id = id)
         
         return redirect('djangoapp:dealer_details', id=id)

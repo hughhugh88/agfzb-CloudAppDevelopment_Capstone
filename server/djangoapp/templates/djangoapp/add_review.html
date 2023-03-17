@@ -18,7 +18,7 @@
                 <div class='form-group'>
                     <div class='mb-3'>
                         <label for='content'><b>Please enter your review: </b></label>
-                        <textare class='form-control' id='content' name='content' rows='2' required></textare>
+                        <textarea class='form-control' id='content' name='content' rows='2' required></textarea>
                     </div>
                     <div class='form-check'>
                         <input class='form-check-input' type='checkbox' name='purchasecheck' id='purchasecheck'>
@@ -31,7 +31,7 @@
                         <label for='car'><b>Please select your car</b></label>
                         <select name='car' id='car' class='form-select' required>
                             {% for car in cars %}
-                            <option selected value={{car.id}}>{{car.name}}-{{car.carmake.name}}-{{car.year|date:'Y'}}</option>
+                            <option selected value={{car.id}}>{{car.name}}-{{car.carmake.name}}-{{car.year}}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -40,6 +40,7 @@
                         <input type='date' value='2018-07-22' name='purchasedate' id='purchasedate'>
                     </div>
                 </div>
+                {% csrf_token %}
                 <div>
                     <button class='btn btn-primary' type='submit'>Submit</button>
                 </div>

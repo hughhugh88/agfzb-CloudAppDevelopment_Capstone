@@ -1,0 +1,13 @@
+<form action='{% url 'djangoapp:lgoin_request' %}' method='post'>
+    {% csrf_token %}
+    <div class='container'>
+        <h1>Login</h1>
+        <label for='username'>User Name</labe>
+        <input type='text' placeholder='Enter User Name: ' name='username' required>
+        <label for='password'>Password</label>
+        <input type='password' placeholder='Enter Password: ' name='psw' required>
+        <div>
+            <button class='button' type='submit'>Login</button>
+        </div>
+    </div>
+</form>

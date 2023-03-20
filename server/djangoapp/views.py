@@ -2,7 +2,6 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
-from django import forms
 from .models import *
 from .restapis import *
 from django.contrib.auth import login, logout, authenticate
@@ -60,7 +59,7 @@ def registration_request(request):
     elif request.method == 'POST':
         username = request.POST['username']
         password = request.POST['psw']
-        password_confirm = request.POST['psd_confirm']
+        password_confirm = request.POST['psw_confirm']
         first_name = request.POST['first_name']
         last_name = request.POST['last_name']
         user_exist = False
@@ -70,8 +69,9 @@ def registration_request(request):
         except:
             logger.error('Please enter new username')
         if password_confirm != password:
-            raise forms.ValidationError('Password do not match')
-        if not user_exist:
+            messages.warning(request, 'Passwords do not match')
+            return redirect('djangoapp:registration')
+        elif not user_exist:
             user = User.objects.create_user(username=username, password=password, first_name=first_name, last_name=last_name)
             user.is_superuser = False
             user.is_staff = True
@@ -123,22 +123,25 @@ def add_review(request, id):
         return render(request, 'djangoapp/add_review.html', context)
     
     elif request.method == 'POST':
-        # if request.user.is_authenticated:
-        username = 'b'
-        review = {}
-        # car_id = request.POST['car']
-        # car = CarModel.objects.get(pk=car_id)
-        review['time'] = datetime.utcnow().isoformat()
-        review['name'] = username
-        review['dealersip'] = id
-        review['review'] = request.POST['content']
-        review['purchase'] = False
-        if request.POST.get('purchasecheck'):
-            review['purchase'] = True
-        review['purchase_date'] = request.POST['purchasedate']
-        # review['car_model'] = car.name
-        review_post_url = 'https://eu-de.functions.appdomain.cloud/api/v1/web/0581ed39-c804-41c0-8c7d-094e5cc8836f/dealership-package/post-review'
-
-        post_request(review_post_url, review, id = id)
+        if request.user.is_authenticated:
+            name = request.user.username
+            review = {}
+            car_id = request.POST['car']
+            car = CarModel.objects.get(pk=car_id)
+            review['time'] = datetime.utcnow().isoformat()
+            review['name'] = name
+            review['dealersip'] = id
+            review['review'] = request.POST['content']
+            review['purchase'] = False
+            if request.POST.get('purchasecheck'):
+                review['purchase'] = True
+            review['purchase_date'] = request.POST['purchasedate']
+            review['car_model'] = car.name
+            review['car_make'] = car.make.name
+            review['car_year'] = car.year.strftime("%Y")
+            review_post_url = 'https://eu-de.functions.appdomain.cloud/api/v1/web/0581ed39-c804-41c0-8c7d-094e5cc8836f/dealership-package/post-review'
+            new_review = {"review": review}
+            print(new_review)
+            post_request(review_post_url, new_review, id = id)
         
-        return redirect('djangoapp:dealer_details', id=id)
+            return redirect('djangoapp:dealer_details', id=id)

@@ -145,3 +145,5 @@ def add_review(request, id):
             post_request(review_post_url, new_review, id = id)
         
             return redirect('djangoapp:dealer_details', id=id)
+        else:
+            return redirect('djangoapp:login')
